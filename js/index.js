@@ -1,9 +1,14 @@
-const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
-// const client = mqtt.connect("ws://localhost:8883");
+const client = mqtt.connect("ws://3.23.172.84:8883");
+
+const LED_STATE = Object.freeze({
+  OFF: 0,
+  ON: 1,
+});
 
 const app = () => ({
   esp32s: [
-    { pc: "Ale", id: "55914d23-0d9a-4fb2-a8cf-d13fa241fa52" },
+    { pc: "Ale", id: "feb0903f-6d43-4fe6-a23b-5eca1ab8efe2" },
+    { pc: "Racson", id: "55914d23-0d9a-4fb2-a8cf-d13fa241fa52" },
     { pc: "Juan", id: "ab2a1359-0bbe-46a3-ad3c-e9141989224b" },
     { pc: "Jesus", id: "eb2a1359-0bbe-46a3-ad3c-e9141989224b" },
     { pc: "Argentina", id: "00d805e4-925d-40da-b436-ba3bfdc7cde6" },
@@ -12,18 +17,21 @@ const app = () => ({
 });
 
 const esp32Controller = (id) => ({
-  deviceTemperature: "0",
-  deviceHumidity: "0",
+  deviceTemperature: 0,
+  deviceHumidity: 0,
   localtemperature: "50",
   localHumidity: "50",
   localServoPosition: 0,
-  ledState: "off",
+  ledState: LED_STATE.OFF,
   init() {
     client.on("connect", () => {
       client.subscribe(this.tempTopic, (err) => {
         if (err) console.error(err);
       });
       client.subscribe(this.humidityDeviceTopic, (err) => {
+        if (err) console.error(err);
+      });
+      client.subscribe(this.ledTopic, (err) => {
         if (err) console.error(err);
       });
     });
@@ -44,6 +52,8 @@ const esp32Controller = (id) => ({
         case this.humidityDeviceTopic:
           this.deviceHumidity = value;
           break;
+        case this.ledTopic:
+          this.ledState = value;
       }
     });
 
@@ -52,7 +62,7 @@ const esp32Controller = (id) => ({
         this.tempTopic,
         JSON.stringify({
           from: "external",
-          value,
+          value: Number(value),
           message: "Actualizar temperatura",
         })
       );
@@ -63,7 +73,7 @@ const esp32Controller = (id) => ({
         this.humidityDeviceTopic,
         JSON.stringify({
           from: "external",
-          value,
+          value: Number(value),
           message: "Actualizar humedad",
         })
       );
@@ -74,7 +84,7 @@ const esp32Controller = (id) => ({
         this.servoTopic,
         JSON.stringify({
           from: "external",
-          value: value,
+          value: Number(value),
           message: "Actualizar servo",
         })
       );
@@ -83,8 +93,8 @@ const esp32Controller = (id) => ({
     this.$watch("ledState", (value) => {
       const message = JSON.stringify({
         from: "external",
-        value: value,
-        message: value === "off" ? "Encender led" : "Apagar led",
+        value: Number(value),
+        message: value === LED_STATE.OFF ? "Encender led" : "Apagar led",
       });
 
       client.publish(this.ledTopic, message);
@@ -103,12 +113,12 @@ const esp32Controller = (id) => ({
     return `${id}/servo`;
   },
   get ledIsOff() {
-    return this.ledState === "off";
+    return this.ledState === LED_STATE.OFF;
   },
   get ledButtonText() {
     return this.ledIsOff ? "Encender led" : "Apagar led";
   },
   toggleLed() {
-    this.ledState = this.ledIsOff ? "on" : "off";
+    this.ledState = this.ledIsOff ? LED_STATE.ON : LED_STATE.OFF;
   },
 });

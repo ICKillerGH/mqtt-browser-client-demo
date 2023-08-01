@@ -9,33 +9,20 @@
   </head>
   <body>
     <div class="max-w-2xl mx-auto space-y-4" x-data="app">
-      <template x-for="esp32 in esp32s">
+      <template x-for="(esp32, i) in esp32s">
         <div
           class="space-y-4 rounded border border-gray-100 shadow p-4"
           x-data="esp32Controller(esp32.id)"
         >
           <h2 class="text-3xl font-semibold">
-            ESP32 - <span x-text="esp32.pc"></span>
+            ESP32 - <span x-text="`Usuario ${i}`"></span>
           </h2>
 
-          <div class="grid grid-cols-2 gap-6">
-            <div class="rounded bg-blue-400 text-white text-center p-4">
-              <p class="text-2xl font-semibold">Temperatura</p>
-              <p class="text-7xl"><span x-text="deviceTemperature"></span>°</p>
-            </div>
-            <div class="rounded bg-blue-400 text-white text-center p-4">
-              <p class="text-2xl font-semibold">Humedad</p>
-              <p class="text-7xl"><span x-text="deviceHumidity">20</span>%</p>
-            </div>
-          </div>
-
-          <div>
-            <p class="text-center font-semibold">Control de servo</p>
-            <input
-              type="range"
-              class="w-full"
-              x-model.debounce.300="localServoPosition"
-            />
+          <div class="rounded bg-blue-400 text-white text-center p-4">
+            <p class="text-2xl font-semibold">Temperatura</p>
+            <p class="text-7xl">
+              <span x-text="deviceTemperature.toFixed(2)"></span>°
+            </p>
           </div>
 
           <button
