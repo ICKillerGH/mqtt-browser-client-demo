@@ -6,14 +6,12 @@ const LED_STATE = Object.freeze({
 });
 
 const app = () => ({
-  esp32s: [
-    { pc: "Ale", id: "feb0903f-6d43-4fe6-a23b-5eca1ab8efe2" },
-    { pc: "Racson", id: "55914d23-0d9a-4fb2-a8cf-d13fa241fa52" },
-    { pc: "Juan", id: "ab2a1359-0bbe-46a3-ad3c-e9141989224b" },
-    { pc: "Jesus", id: "eb2a1359-0bbe-46a3-ad3c-e9141989224b" },
-    { pc: "Argentina", id: "00d805e4-925d-40da-b436-ba3bfdc7cde6" },
-    { pc: "Chuo", id: "d231c3b8-af05-490a-ac5a-fd39fa7e23a5" },
-  ],
+  esp32s: [],
+  init() {
+    fetch("../devices.json")
+      .then((res) => res.json())
+      .then((devices) => (this.esp32s = devices));
+  },
 });
 
 const esp32Controller = (id) => ({
