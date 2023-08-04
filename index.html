@@ -48,7 +48,7 @@
             <button
               class="h-32 w-32 border-4 rounded-full"
               x-bind:class="sysStateIsOff ? 'border-red-500 text-red-500' : 'border-green-600 text-green-600'"
-              x-on:click="togglesysState"
+              x-on:click="toggleSysState"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -85,19 +85,13 @@
 
           <!-- CORRIENTE -->
           <div
-            class="flex flex-col items-center h-56 rounded-2xl bg-white shadow-md p-6 text-center"
+            class="grid justify-center h-56 rounded-2xl bg-white shadow-md p-6 text-center"
           >
             <p class="text-xl">Corriente</p>
 
-            <!-- <div class="text-4xl mt-10">
-              <span class="text-6xl" x-text="current"></span> Apm
-            </div> -->
-            <div
-              class="relative"
-              x-data="rangeSlider({min: 0, max: 100, value: current, readonly: true, suffix: ' Amp', colorFG: '#1130bd'})"
-              x-modelable="value"
-              x-model="current"
-            ></div>
+            <span class="text-5xl font-italic">
+              <span x-text="current"></span> A</span
+            >
           </div>
           <!-- CORRIENTE END -->
 
@@ -109,7 +103,7 @@
 
             <div
               class="relative"
-              x-data="rangeSlider({min: 0, max: 100, value: voltage, readonly: true, suffix: ' Vac', colorFG: '#1130bd'})"
+              x-data="rangeSlider({min: 0, max: 300, value: voltage, readonly: true, suffix: ' Vac', colorFG: '#1130bd'})"
               x-modelable="value"
               x-model="voltage"
             ></div>
@@ -122,7 +116,7 @@
 
             <div
               class="relative justify-self-center"
-              x-data="rangeSlider({min: 0, max: 100, value: targetTemperature, suffix: ' °C'})"
+              x-data="rangeSlider({min: 20, max: 150, value: targetTemperature, suffix: ' °C'})"
               x-modelable="value"
               x-model="targetTemperature"
             ></div>
@@ -135,7 +129,7 @@
 
             <div
               class="relative justify-self-center"
-              x-data="rangeSlider({min: 0, max: 100, value: temperature, readonly: true, suffix: ' °C'})"
+              x-data="rangeSlider({min: 0, max: 150, value: temperature, readonly: true, suffix: ' °C'})"
               x-modelable="value"
               x-model="temperature"
             ></div>
@@ -157,7 +151,7 @@
 
             <div
               class="relative justify-self-center"
-              x-data="rangeSlider({min: 0, max: 10, value: targetPower, suffix: ' W', colorFG: '#cc0c0c'})"
+              x-data="rangeSlider({min: 0, max: 300, value: targetPower, suffix: ' W', colorFG: '#cc0c0c'})"
               x-modelable="value"
               x-model="targetPower"
             ></div>
@@ -170,7 +164,7 @@
 
             <div
               class="relative justify-self-center"
-              x-data="rangeSlider({min: 0, max: 10, value: power, suffix: ' W', colorFG: '#cc0c0c', readonly: true})"
+              x-data="rangeSlider({min: 0, max: 300, value: power, suffix: ' W', colorFG: '#cc0c0c', readonly: true})"
               x-modelable="value"
               x-model="power"
             ></div>

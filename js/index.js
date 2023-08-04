@@ -6,7 +6,7 @@ const POWER_STATE = Object.freeze({
 });
 
 const app = () => ({
-  selectedUser: "feb0903f-6d43-4fe6-a23b-5eca1ab8efe2",
+  selectedUser: null,
   esp32s: [],
   sysState: POWER_STATE.OFF,
   mode: 1,
@@ -19,6 +19,7 @@ const app = () => ({
   async init() {
     const response = await fetch("../devices.json");
     this.esp32s = await response.json();
+    this.selectedUser = this.esp32s?.[0]?.id ?? null;
 
     client.on("connect", () => {
       if (!this.selectedUser) {
@@ -44,7 +45,12 @@ const app = () => ({
 
     client.on("message", (topic, message) => {
       const stringMessage = message.toString();
-      const { from, value } = JSON.parse(stringMessage);
+      let objectMessage = {};
+
+      try {
+        objectMessage = JSON.parse(stringMessage);
+      } catch (e) {}
+      const { from, value } = objectMessage;
       const isFromDevice = from === "device";
 
       if (!isFromDevice) {
@@ -59,7 +65,7 @@ const app = () => ({
           this.mode = value;
           break;
         case this.temperatureSensorTopic(this.selectedUser):
-          this.temperature = parseInt(value);
+          this.temperature = value;
           break;
         case this.targetTemperatureTopic(this.selectedUser):
           this.targetTemperature = value;
@@ -70,6 +76,11 @@ const app = () => ({
         case this.targetPowerTopic(this.selectedUser):
           this.targetPower = value;
           break;
+        case this.currentTopic(this.selectedUser):
+          this.current = value;
+          break;
+        case this.voltageTopic(this.selectedUser):
+          this.voltage = value;
       }
     });
 
@@ -137,10 +148,11 @@ const app = () => ({
     return `${id}/temperature_sensor`;
   },
   targetTemperatureTopic(id) {
+    return `${id}/spajuste`;
     return `${id}/target_temperature`;
   },
   powerSensorTopic(id) {
-    return `${id}/power_sensor`;
+    return `${id}/power`;
   },
   targetPowerTopic(id) {
     return `${id}/target_power`;
@@ -152,6 +164,7 @@ const app = () => ({
     return (value) => {
       const message = JSON.stringify({
         from: "app",
+        message: "Lo que sea",
         value,
       });
 
@@ -182,7 +195,7 @@ const rangeSlider = ({
   max = 100,
   value = 0,
   readonly = false,
-  textScale = 0.7,
+  textScale = 0.65,
   colorFG = "#fce303",
   suffix = "",
 } = {}) => ({
@@ -198,10 +211,10 @@ const rangeSlider = ({
     knob.setProperty("textScale", textScale);
     knob.setProperty("valMin", min);
     knob.setProperty("valMax", max);
-    knob.setProperty(
-      "fnValueToString",
-      (value) => `${value.toString()}${suffix}`
-    );
+    knob.setProperty("readonly", readonly);
+    knob.setProperty("fnValueToString", (value) => {
+      return `${value.toFixed(2)}${suffix}`;
+    });
 
     knob.setValue(this.value);
 
@@ -215,15 +228,8 @@ const rangeSlider = ({
 
     this.$root.appendChild(node);
 
-    if (readonly) {
-      const div = document.createElement("div");
-
-      div.classList.add("absolute", "inset-0", "z-10", "opacity-0");
-
-      this.$root.appendChild(div);
-    }
-
     this.$watch("value", (value) => {
+      console.log(value);
       knob.setValue(value);
     });
   },
