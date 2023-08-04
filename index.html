@@ -6,32 +6,187 @@
     <title>MQTT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/mqtt@5.0.0/dist/mqtt.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kavoon&family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Kavoon", cursive;
+        font-family: "Poppins", sans-serif;
+      }
+    </style>
   </head>
-  <body>
-    <div class="max-w-2xl mx-auto space-y-4" x-data="app">
-      <template x-for="(esp32, i) in esp32s">
-        <div
-          class="space-y-4 rounded border border-gray-100 shadow p-4"
-          x-data="esp32Controller(esp32.id)"
+  <body class="bg-gray-100 py-4">
+    <div class="max-w-7xl mx-auto space-y-4" x-data="app">
+      <div class="flex justify-between items-center">
+        <h1 class="text-4xl font-semibold py-2">Dashboard de control</h1>
+
+        <select
+          class="py-2 px-3 border border-gray-200 rounded focus:outline-none focus:ring ring-blue-300"
+          x-model="selectedUser"
         >
-          <h2 class="text-3xl font-semibold">
-            ESP32 - <span x-text="`Usuario ${i}`"></span>
-          </h2>
+          <template x-for="(esp32, i) in esp32s">
+            <option
+              x-bind:value="esp32.id"
+              x-text="`Usuario ${i + 1}`"
+            ></option>
+          </template>
+        </select>
+      </div>
 
-          <div class="rounded bg-blue-400 text-white text-center p-4">
-            <p class="text-2xl font-semibold">Temperatura</p>
-            <p class="text-7xl">
-              <span x-text="deviceTemperature.toFixed(2)"></span>°
-            </p>
+      <template x-if="selectedUser">
+        <div class="grid grid-cols-4 gap-4">
+          <!-- ON/OFF -->
+          <div
+            class="flex flex-col items-center justify-between h-56 space-y-4 rounded-2xl bg-white shadow-md p-6 text-center"
+          >
+            <p class="text-xl">ON / OFF</p>
+
+            <button
+              class="h-32 w-32 border-4 rounded-full"
+              x-bind:class="displayStateIsOff ? 'border-red-500 text-red-500' : 'border-green-600 text-green-600'"
+              x-on:click="toggleDisplayState"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon icon-tabler icon-tabler-power w-full h-full"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M7 6a7.75 7.75 0 1 0 10 0"></path>
+                <path d="M12 4l0 8"></path>
+              </svg>
+            </button>
           </div>
+          <!-- ON/OFF END -->
 
-          <button
-            type="button"
-            class="px-3 py-2 w-full rounded shadow text-white font-semibold"
-            x-bind:class="ledIsOff ? 'bg-green-500' : 'bg-red-500'"
-            x-text="ledButtonText"
-            x-on:click="toggleLed"
-          ></button>
+          <!-- MODO -->
+          <div
+            class="flex flex-col items-center justify-between h-56 space-y-4 rounded-2xl bg-white shadow-md p-6 text-center"
+          >
+            <p class="text-xl">Modo</p>
+
+            <div
+              class="relative"
+              x-data="rangeSlider({min: 1, max: 5, value: mode, colorFG: '#117ebd'})"
+              x-modelable="value"
+              x-model="mode"
+            ></div>
+          </div>
+          <!-- MODO END -->
+
+          <!-- CORRIENTE -->
+          <div
+            class="flex flex-col items-center h-56 rounded-2xl bg-white shadow-md p-6 text-center"
+          >
+            <p class="text-xl">Corriente</p>
+
+            <!-- <div class="text-4xl mt-10">
+              <span class="text-6xl" x-text="current"></span> Apm
+            </div> -->
+            <div
+              class="relative"
+              x-data="rangeSlider({min: 0, max: 100, value: current, readonly: true, suffix: ' Amp', colorFG: '#1130bd'})"
+              x-modelable="value"
+              x-model="current"
+            ></div>
+          </div>
+          <!-- CORRIENTE END -->
+
+          <!-- VOLTAJE -->
+          <div
+            class="flex flex-col items-center h-56 rounded-2xl bg-white shadow-md p-6 text-center"
+          >
+            <p class="text-xl">Voltaje</p>
+
+            <div
+              class="relative"
+              x-data="rangeSlider({min: 0, max: 100, value: voltage, readonly: true, suffix: ' Vac', colorFG: '#1130bd'})"
+              x-modelable="value"
+              x-model="voltage"
+            ></div>
+          </div>
+          <!-- VOLTAJE END -->
+
+          <!-- TEMPERATURA OBJETIVO -->
+          <div
+            class="flex flex-col items-center h-56 space-y-4 rounded-2xl bg-white shadow-md p-6 text-center"
+          >
+            <p class="text-xl">Temperatura objetivo</p>
+
+            <div
+              class="relative"
+              x-data="rangeSlider({min: 0, max: 100, value: targetTemperature, suffix: ' °C'})"
+              x-modelable="value"
+              x-model="targetTemperature"
+            ></div>
+          </div>
+          <!-- TEMPERATURA OBJETIVO END -->
+
+          <!-- TEMPERATURA -->
+          <div
+            class="flex flex-col items-center h-56 rounded-2xl bg-white shadow-md p-6 text-center"
+          >
+            <p class="text-xl">Temperatura</p>
+
+            <div
+              class="relative"
+              x-data="rangeSlider({min: 0, max: 100, value: temperature, readonly: true, suffix: ' °C'})"
+              x-modelable="value"
+              x-model="temperature"
+            ></div>
+          </div>
+          <!-- TEMPERATURA END -->
+
+          <!-- TEMPERATURA GRAFICO -->
+          <div
+            class="col-span-2 h-56 space-y-4 rounded-2xl bg-white shadow-md p-4"
+          ></div>
+          <!-- TEMPERATURA GRAFICO END -->
+
+          <!-- POTENCIA OBJETIVO -->
+          <div
+            class="flex flex-col items-center justify-between h-56 space-y-4 rounded-2xl bg-white shadow-md p-6 text-center"
+          >
+            <p class="text-xl">Potencia objetivo</p>
+
+            <div
+              class="relative"
+              x-data="rangeSlider({min: 0, max: 10, value: targetPower, suffix: ' W', colorFG: '#cc0c0c'})"
+              x-modelable="value"
+              x-model="targetPower"
+            ></div>
+          </div>
+          <!-- POTENCIA OBJETIVO END -->
+
+          <!-- POTENCIA -->
+          <div
+            class="flex flex-col items-center h-56 rounded-2xl bg-white shadow-md p-6 text-center"
+          >
+            <p class="text-xl">Potencia</p>
+
+            <div
+              class="relative"
+              x-data="rangeSlider({min: 0, max: 10, value: power, suffix: ' W', colorFG: '#cc0c0c', readonly: true})"
+              x-modelable="value"
+              x-model="power"
+            ></div>
+          </div>
+          <!-- POTENCIA END -->
+
+          <!-- POTENCIA GRAFICO -->
+          <div
+            class="col-span-2 h-56 space-y-4 rounded-2xl bg-white shadow-md p-4"
+          ></div>
+          <!-- POTENCIA GRAFICO END -->
         </div>
       </template>
     </div>
@@ -40,6 +195,7 @@
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
+    <script src="js/pureknob.js"></script>
     <script src="js/index.js"></script>
   </body>
 </html>
