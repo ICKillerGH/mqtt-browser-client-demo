@@ -70,7 +70,7 @@
 
           <!-- MODO -->
           <div
-            class="flex flex-col items-center justify-between h-56 space-y-4 rounded-2xl bg-white shadow-md p-6 text-center"
+            class="flex flex-col items-center justify-between h-56 rounded-2xl bg-white shadow-md p-6 text-center"
           >
             <p class="text-xl">Modo</p>
 
@@ -117,13 +117,11 @@
           <!-- VOLTAJE END -->
 
           <!-- TEMPERATURA OBJETIVO -->
-          <div
-            class="flex flex-col items-center h-56 space-y-4 rounded-2xl bg-white shadow-md p-6 text-center"
-          >
+          <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
             <p class="text-xl">Temperatura objetivo</p>
 
             <div
-              class="relative"
+              class="relative justify-self-center"
               x-data="rangeSlider({min: 0, max: 100, value: targetTemperature, suffix: ' °C'})"
               x-modelable="value"
               x-model="targetTemperature"
@@ -132,13 +130,11 @@
           <!-- TEMPERATURA OBJETIVO END -->
 
           <!-- TEMPERATURA -->
-          <div
-            class="flex flex-col items-center h-56 rounded-2xl bg-white shadow-md p-6 text-center"
-          >
+          <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
             <p class="text-xl">Temperatura</p>
 
             <div
-              class="relative"
+              class="relative justify-self-center"
               x-data="rangeSlider({min: 0, max: 100, value: temperature, readonly: true, suffix: ' °C'})"
               x-modelable="value"
               x-model="temperature"
@@ -147,19 +143,20 @@
           <!-- TEMPERATURA END -->
 
           <!-- TEMPERATURA GRAFICO -->
-          <div
-            class="col-span-2 h-56 space-y-4 rounded-2xl bg-white shadow-md p-4"
-          ></div>
+          <div class="col-span-2 space-y-4 rounded-2xl bg-white shadow-md p-4">
+            <canvas
+              class="w-full"
+              x-data="chart({data: [30, 40, 35, 50, 49, 40], label: 'Temperaturas'})"
+            ></canvas>
+          </div>
           <!-- TEMPERATURA GRAFICO END -->
 
           <!-- POTENCIA OBJETIVO -->
-          <div
-            class="flex flex-col items-center justify-between h-56 space-y-4 rounded-2xl bg-white shadow-md p-6 text-center"
-          >
+          <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
             <p class="text-xl">Potencia objetivo</p>
 
             <div
-              class="relative"
+              class="relative justify-self-center"
               x-data="rangeSlider({min: 0, max: 10, value: targetPower, suffix: ' W', colorFG: '#cc0c0c'})"
               x-modelable="value"
               x-model="targetPower"
@@ -168,13 +165,11 @@
           <!-- POTENCIA OBJETIVO END -->
 
           <!-- POTENCIA -->
-          <div
-            class="flex flex-col items-center h-56 rounded-2xl bg-white shadow-md p-6 text-center"
-          >
+          <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
             <p class="text-xl">Potencia</p>
 
             <div
-              class="relative"
+              class="relative justify-self-center"
               x-data="rangeSlider({min: 0, max: 10, value: power, suffix: ' W', colorFG: '#cc0c0c', readonly: true})"
               x-modelable="value"
               x-model="power"
@@ -183,18 +178,21 @@
           <!-- POTENCIA END -->
 
           <!-- POTENCIA GRAFICO -->
-          <div
-            class="col-span-2 h-56 space-y-4 rounded-2xl bg-white shadow-md p-4"
-          ></div>
+          <div class="col-span-2 space-y-4 rounded-2xl bg-white shadow-md p-4">
+            <canvas
+              class="w-full"
+              x-data="chart({data: [20, 10, 35, 50, 60, 40], label: 'Potencias'})"
+            ></canvas>
+          </div>
           <!-- POTENCIA GRAFICO END -->
         </div>
       </template>
     </div>
-
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/pureknob.js"></script>
     <script src="js/index.js"></script>
   </body>

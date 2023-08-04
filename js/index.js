@@ -230,3 +230,34 @@ const rangeSlider = ({
     });
   },
 });
+
+const chart = ({ data, label }) => ({
+  data: {
+    labels: ["20:00", "20:10", "20:20", "20:30", "20:40", "20:50"],
+    datasets: [
+      {
+        label,
+        data,
+        borderColor: "red",
+        backgroundColor: "white",
+        pointStyle: "circle",
+        pointRadius: 10,
+        pointHoverRadius: 15,
+      },
+    ],
+  },
+  chart,
+  init() {
+    const options = {
+      type: "line",
+      data: this.data,
+      options: {
+        responsive: true,
+      },
+    };
+
+    this.chart = new Chart(this.$root, options);
+
+    this.chart.render();
+  },
+});
