@@ -8,7 +8,7 @@ const POWER_STATE = Object.freeze({
 const app = () => ({
   selectedUser: "feb0903f-6d43-4fe6-a23b-5eca1ab8efe2",
   esp32s: [],
-  displayState: POWER_STATE.OFF,
+  sysState: POWER_STATE.OFF,
   mode: 1,
   current: 0,
   voltage: 0,
@@ -27,7 +27,7 @@ const app = () => ({
 
       client.subscribe(
         [
-          this.displayStateTopic(this.selectedUser),
+          this.sysStateTopic(this.selectedUser),
           this.modeTopic(this.selectedUser),
           this.currentTopic(this.selectedUser),
           this.voltageTopic(this.selectedUser),
@@ -52,8 +52,8 @@ const app = () => ({
       }
 
       switch (topic) {
-        case this.displayStateTopic(this.selectedUser):
-          this.displayState = Boolean(value);
+        case this.sysStateTopic(this.selectedUser):
+          this.sysState = Boolean(value);
           break;
         case this.modeTopic(this.selectedUser):
           this.mode = value;
@@ -77,7 +77,7 @@ const app = () => ({
       if (prevValue) {
         client.unsubscribe(
           [
-            this.displayStateTopic(prevValue),
+            this.sysStateTopic(prevValue),
             this.modeTopic(prevValue),
             this.currentTopic(prevValue),
             this.voltageTopic(prevValue),
@@ -95,7 +95,7 @@ const app = () => ({
       if (value) {
         client.subscribe(
           [
-            this.displayStateTopic(value),
+            this.sysStateTopic(value),
             this.modeTopic(value),
             this.currentTopic(value),
             this.voltageTopic(value),
@@ -121,8 +121,8 @@ const app = () => ({
       this.sendMqttMessage(this.targetPowerTopic(this.selectedUser))(value);
     });
   },
-  displayStateTopic(id) {
-    return `${id}/display`;
+  sysStateTopic(id) {
+    return `${id}/onoff`;
   },
   modeTopic(id) {
     return `${id}/mode`;
@@ -145,8 +145,8 @@ const app = () => ({
   targetPowerTopic(id) {
     return `${id}/target_power`;
   },
-  get displayStateIsOff() {
-    return this.displayState === POWER_STATE.OFF;
+  get sysStateIsOff() {
+    return this.sysState === POWER_STATE.OFF;
   },
   sendMqttMessage(topic) {
     return (value) => {
@@ -158,10 +158,8 @@ const app = () => ({
       client.publish(topic, message);
     };
   },
-  toggleDisplayState() {
-    this.sendMqttMessage(this.displayStateTopic(this.selectedUser))(
-      !this.displayState
-    );
+  toggleSysState() {
+    this.sendMqttMessage(this.sysStateTopic(this.selectedUser))(!this.sysState);
   },
   handleModeChange(event) {
     this.sendMqttMessage(this.modeTopic(this.selectedUser))(
