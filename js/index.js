@@ -1,4 +1,7 @@
-const client = mqtt.connect("ws://3.23.172.84:8883");
+const client = mqtt.connect("ws://3.23.172.84:8883", {
+  username: "mqtt_client",
+  password: "password",
+});
 
 const POWER_STATE = Object.freeze({
   OFF: false,
@@ -16,6 +19,8 @@ const app = () => ({
   temperature: 0,
   targetPower: 0,
   power: 0,
+  temperatureMetrics: [0, 0, 0, 0, 0, 0],
+  powerMetrics: [0, 0, 0, 0, 0, 0],
   async init() {
     const response = await fetch("../devices.json");
     this.esp32s = await response.json();
@@ -66,12 +71,14 @@ const app = () => ({
           break;
         case this.temperatureSensorTopic(this.selectedUser):
           this.temperature = value;
+          this.updateTemperatureMetrics(this.temperature);
           break;
         case this.targetTemperatureTopic(this.selectedUser):
           this.targetTemperature = value;
           break;
         case this.powerSensorTopic(this.selectedUser):
           this.power = value;
+          this.updatePowerMetrics(this.power);
           break;
         case this.targetPowerTopic(this.selectedUser):
           this.targetPower = value;
@@ -148,7 +155,6 @@ const app = () => ({
     return `${id}/temperature_sensor`;
   },
   targetTemperatureTopic(id) {
-    return `${id}/spajuste`;
     return `${id}/target_temperature`;
   },
   powerSensorTopic(id) {
@@ -188,6 +194,22 @@ const app = () => ({
     console.log(value);
     this.temperature = value;
   },
+  updateTemperatureMetrics: _.debounce(
+    function (temperature) {
+      this.temperatureMetrics.shift();
+      this.temperatureMetrics.push(temperature);
+    },
+    900,
+    { maxWait: "5000" }
+  ),
+  updatePowerMetrics: _.debounce(
+    function (power) {
+      this.powerMetrics.shift();
+      this.powerMetrics.push(power);
+    },
+    900,
+    { maxWait: "5000" }
+  ),
 });
 
 const rangeSlider = ({
@@ -229,39 +251,53 @@ const rangeSlider = ({
     this.$root.appendChild(node);
 
     this.$watch("value", (value) => {
-      console.log(value);
       knob.setValue(value);
     });
   },
 });
 
-const chart = ({ data, label }) => ({
-  data: {
-    labels: ["20:00", "20:10", "20:20", "20:30", "20:40", "20:50"],
-    datasets: [
-      {
-        label,
-        data,
-        borderColor: "red",
-        backgroundColor: "white",
-        pointStyle: "circle",
-        pointRadius: 10,
-        pointHoverRadius: 15,
-      },
-    ],
-  },
-  chart,
+const chart = () => ({
+  data: [],
+  chart: null,
   init() {
-    const options = {
-      type: "line",
-      data: this.data,
-      options: {
-        responsive: true,
+    var options = {
+      chart: {
+        type: "line",
+        animations: {
+          enabled: true,
+          easing: "linear",
+          dynamicAnimation: {
+            speed: 1000,
+          },
+        },
+        toolbar: {
+          show: false,
+        },
+      },
+      stroke: {
+        curve: "smooth",
+      },
+      series: [
+        {
+          name: "sales",
+          data: [...this.data],
+        },
+      ],
+      xaxis: {
+        categories: ["", "", "", "", "", ""],
       },
     };
 
-    this.chart = new Chart(this.$root, options);
+    this.chart = new ApexCharts(this.$root, options);
 
-    this.chart.render();
+    this.$nextTick(() => this.chart.render());
+
+    this.$watch("data", (metrics) => {
+      this.chart.updateSeries([
+        {
+          data: [...metrics],
+        },
+      ]);
+    });
   },
 });
