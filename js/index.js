@@ -13,8 +13,6 @@ const app = () => ({
   esp32s: [],
   sysState: POWER_STATE.OFF,
   mode: 1,
-  current: 0,
-  voltage: 0,
   targetTemperature: 0,
   temperature: 0,
   targetPower: 0,
@@ -35,8 +33,6 @@ const app = () => ({
         [
           this.sysStateTopic(this.selectedUser),
           this.modeTopic(this.selectedUser),
-          this.currentTopic(this.selectedUser),
-          this.voltageTopic(this.selectedUser),
           this.targetTemperatureTopic(this.selectedUser),
           this.temperatureSensorTopic(this.selectedUser),
           this.targetPowerTopic(this.selectedUser),
@@ -83,11 +79,6 @@ const app = () => ({
         case this.targetPowerTopic(this.selectedUser):
           this.targetPower = value;
           break;
-        case this.currentTopic(this.selectedUser):
-          this.current = value;
-          break;
-        case this.voltageTopic(this.selectedUser):
-          this.voltage = value;
       }
     });
 
@@ -97,8 +88,6 @@ const app = () => ({
           [
             this.sysStateTopic(prevValue),
             this.modeTopic(prevValue),
-            this.currentTopic(prevValue),
-            this.voltageTopic(prevValue),
             this.targetTemperatureTopic(prevValue),
             this.temperatureSensorTopic(prevValue),
             this.targetPowerTopic(prevValue),
@@ -115,8 +104,6 @@ const app = () => ({
           [
             this.sysStateTopic(value),
             this.modeTopic(value),
-            this.currentTopic(value),
-            this.voltageTopic(value),
             this.targetTemperatureTopic(value),
             this.temperatureSensorTopic(value),
             this.targetPowerTopic(value),
@@ -144,12 +131,6 @@ const app = () => ({
   },
   modeTopic(id) {
     return `${id}/mode`;
-  },
-  currentTopic(id) {
-    return `${id}/current`;
-  },
-  voltageTopic(id) {
-    return `${id}/voltage`;
   },
   temperatureSensorTopic(id) {
     return `${id}/temperature_sensor`;
@@ -191,7 +172,6 @@ const app = () => ({
     );
   },
   handleTempChange(value) {
-    console.log(value);
     this.temperature = value;
   },
   updateTemperatureMetrics: _.debounce(
