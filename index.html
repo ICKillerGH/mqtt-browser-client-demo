@@ -38,118 +38,197 @@
       </div>
 
       <template x-if="selectedUser">
-        <div class="grid grid-cols-4 gap-4">
-          <!-- ON/OFF -->
-          <div
-            class="flex flex-col items-center justify-between h-56 space-y-4 rounded-2xl bg-white shadow-md p-6 text-center"
-          >
-            <p class="text-xl">ON / OFF</p>
-
-            <button
-              class="h-32 w-32 border-4 rounded-full"
-              x-bind:class="sysStateIsOff ? 'border-red-500 text-red-500' : 'border-green-600 text-green-600'"
-              x-on:click="toggleSysState"
+        <div class="space-y-4">
+          <div class="grid grid-cols-4 gap-4">
+            <!-- ON/OFF -->
+            <div
+              class="grid items-center rounded-2xl space-y-4 bg-white shadow-md p-6 text-center"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-power w-full h-full"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+              <p class="text-xl">ON / OFF</p>
+
+              <button
+                class="h-32 w-32 justify-self-center border-4 rounded-full"
+                x-bind:class="sysStateIsOff ? 'border-red-500 text-red-500' : 'border-green-600 text-green-600'"
+                x-on:click="toggleSysState"
               >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M7 6a7.75 7.75 0 1 0 10 0"></path>
-                <path d="M12 4l0 8"></path>
-              </svg>
-            </button>
-          </div>
-          <!-- ON/OFF END -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon icon-tabler icon-tabler-power w-full h-full"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M7 6a7.75 7.75 0 1 0 10 0"></path>
+                  <path d="M12 4l0 8"></path>
+                </svg>
+              </button>
+            </div>
+            <!-- ON/OFF END -->
 
-          <!-- MODO -->
-          <div
-            class="flex flex-col items-center justify-between col-span-3 h-56 rounded-2xl bg-white shadow-md p-6 text-center"
-          >
-            <p class="text-xl">Modo</p>
+            <!-- ESTADO DEL DISPOSITIVO -->
+            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+              <p class="text-xl">Estado del dispositivo</p>
 
+              <div class="flex flex-col items-center text-green-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-20 h-20"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path
+                    d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z"
+                    stroke-width="0"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+
+                <span class="text-xl">Operativo</span>
+              </div>
+            </div>
+            <!-- ESTADO DEL DISPOSITIVO END -->
+
+            <!-- MODO -->
             <div
-              class="relative"
-              x-data="rangeSlider({min: 1, max: 3, value: mode, colorFG: '#117ebd'})"
-              x-modelable="value"
-              x-model="mode"
-            ></div>
+              class="grid col-span-2 bg-white space-y-4 rounded-xl shadow-md p-6 text-center"
+            >
+              <p class="text-xl">Modo</p>
+
+              <div
+                class="grid grid-cols-3 gap-4 justify-self-center rounded-xl"
+              >
+                <template x-for="nMode in modes">
+                  <button
+                    class="inline-flex flex-col items-center h-32 w-32 p-4 space-y-2 border-4 rounded-2xl"
+                    x-bind:class="isModeSelected(nMode.name) ? 'border-emerald-400 text-emerald-400' : 'text-gray-300'"
+                    x-on:click="setMode(nMode.name)"
+                  >
+                    <div x-html="nMode.icon"></div>
+
+                    <span class="text-sm" x-text="nMode.name"></span>
+                  </button>
+                </template>
+              </div>
+            </div>
+            <!-- MODO END -->
           </div>
-          <!-- MODO END -->
 
-          <!-- TEMPERATURA OBJETIVO -->
-          <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
-            <p class="text-xl">Temperatura objetivo</p>
+          <div class="grid grid-cols-3 gap-4">
+            <!-- TEMPERATURA OBJETIVO -->
+            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+              <p class="text-xl">Temperatura objetivo</p>
 
+              <div
+                class="relative justify-self-center"
+                x-data="rangeSlider({min: 20, max: 130, value: targetTemperature, suffix: ' °C'})"
+                x-modelable="value"
+                x-model="targetTemperature"
+              ></div>
+            </div>
+            <!-- TEMPERATURA OBJETIVO END -->
+
+            <!-- SMART OBJETIVO -->
+            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+              <p class="text-xl">Smart objetivo</p>
+
+              <div
+                class="relative justify-self-center"
+                x-data="rangeSlider({min: 20, max: 130, value: targetTemperature, suffix: ' °C'})"
+                x-modelable="value"
+                x-model="targetTemperature"
+              ></div>
+            </div>
+            <!-- SMART OBJETIVO END -->
+
+            <!-- ECO OBJETIVO -->
+            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+              <p class="text-xl">Eco objetivo</p>
+
+              <div
+                class="relative justify-self-center"
+                x-data="rangeSlider({min: 20, max: 130, value: targetTemperature, suffix: ' °C'})"
+                x-modelable="value"
+                x-model="targetTemperature"
+              ></div>
+            </div>
+            <!-- ECO OBJETIVO END -->
+          </div>
+
+          <div class="grid grid-cols-3 gap-4">
+            <!-- TEMPERATURA -->
+            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+              <p class="text-xl">Temperatura</p>
+
+              <div
+                class="relative justify-self-center"
+                x-data="rangeSlider({min: 0, max: 130, value: temperature, readonly: true, suffix: ' °C', colorFG: '#4287f5'})"
+                x-modelable="value"
+                x-model="temperature"
+              ></div>
+            </div>
+            <!-- TEMPERATURA END -->
+
+            <!-- TEMPERATURA GRAFICO -->
             <div
-              class="relative justify-self-center"
-              x-data="rangeSlider({min: 20, max: 130, value: targetTemperature, suffix: ' °C'})"
-              x-modelable="value"
-              x-model="targetTemperature"
-            ></div>
+              class="col-span-2 space-y-4 rounded-2xl bg-white shadow-md p-4"
+            >
+              <div
+                x-data="chart"
+                x-modelable="data"
+                x-model="temperatureMetrics"
+              ></div>
+            </div>
+            <!-- TEMPERATURA GRAFICO END -->
           </div>
-          <!-- TEMPERATURA OBJETIVO END -->
 
-          <!-- TEMPERATURA -->
-          <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
-            <p class="text-xl">Temperatura</p>
+          <div class="grid grid-cols-4 gap-4">
+            <!-- POTENCIA OBJETIVO -->
+            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+              <p class="text-xl">Potencia objetivo</p>
 
+              <div
+                class="relative justify-self-center"
+                x-data="rangeSlider({min: 0, max: 10, value: targetPower, colorFG: '#cc0c0c'})"
+                x-modelable="value"
+                x-model="targetPower"
+              ></div>
+            </div>
+            <!-- POTENCIA OBJETIVO END -->
+
+            <!-- POTENCIA -->
+            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+              <p class="text-xl">Potencia</p>
+
+              <div
+                class="relative justify-self-center"
+                x-data="rangeSlider({min: 0, max: 300, value: power, colorFG: '#cc0c0c', readonly: true})"
+                x-modelable="value"
+                x-model="power"
+              ></div>
+            </div>
+            <!-- POTENCIA END -->
+
+            <!-- POTENCIA GRAFICO -->
             <div
-              class="relative justify-self-center"
-              x-data="rangeSlider({min: 0, max: 130, value: temperature, readonly: true, suffix: ' °C'})"
-              x-modelable="value"
-              x-model="temperature"
-            ></div>
+              class="col-span-2 space-y-4 rounded-2xl bg-white shadow-md p-4"
+            >
+              <div
+                x-data="chart"
+                x-modelable="data"
+                x-model="powerMetrics"
+              ></div>
+            </div>
+            <!-- POTENCIA GRAFICO END -->
           </div>
-          <!-- TEMPERATURA END -->
-
-          <!-- TEMPERATURA GRAFICO -->
-          <div class="col-span-2 space-y-4 rounded-2xl bg-white shadow-md p-4">
-            <div
-              x-data="chart"
-              x-modelable="data"
-              x-model="temperatureMetrics"
-            ></div>
-          </div>
-          <!-- TEMPERATURA GRAFICO END -->
-
-          <!-- POTENCIA OBJETIVO -->
-          <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
-            <p class="text-xl">Potencia objetivo</p>
-
-            <div
-              class="relative justify-self-center"
-              x-data="rangeSlider({min: 0, max: 10, value: targetPower, suffix: ' W', colorFG: '#cc0c0c'})"
-              x-modelable="value"
-              x-model="targetPower"
-            ></div>
-          </div>
-          <!-- POTENCIA OBJETIVO END -->
-
-          <!-- POTENCIA -->
-          <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
-            <p class="text-xl">Potencia</p>
-
-            <div
-              class="relative justify-self-center"
-              x-data="rangeSlider({min: 0, max: 300, value: power, suffix: ' W', colorFG: '#cc0c0c', readonly: true})"
-              x-modelable="value"
-              x-model="power"
-            ></div>
-          </div>
-          <!-- POTENCIA END -->
-
-          <!-- POTENCIA GRAFICO -->
-          <div class="col-span-2 space-y-4 rounded-2xl bg-white shadow-md p-4">
-            <div x-data="chart" x-modelable="data" x-model="powerMetrics"></div>
-          </div>
-          <!-- POTENCIA GRAFICO END -->
         </div>
       </template>
     </div>
