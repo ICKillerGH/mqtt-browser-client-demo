@@ -57,7 +57,7 @@ const MODES = [
     icon: `
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="w-16 h-16+"
+        class="w-16 h-16"
         viewBox="0 0 24 24"
         stroke-width="2"
         stroke="currentColor"
@@ -70,6 +70,30 @@ const MODES = [
         <path d="M15.536 16.536a5 5 0 1 0 -7.072 0"></path>
         <path d="M12 13m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
       </svg>
+    `,
+  },
+  {
+    name: "Potencia",
+    icon: `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-16 h-16"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path
+        d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2"
+      ></path>
+      <path d="M7 10l0 4"></path>
+      <path d="M10 10l0 4"></path>
+      <path d="M13 10l0 4"></path>
+      <path d="M16 10l0 4"></path>
+    </svg>  
     `,
   },
 ];
