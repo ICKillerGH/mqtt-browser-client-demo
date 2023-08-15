@@ -154,6 +154,12 @@ const app = () => ({
         case this.targetTemperatureTopic(this.selectedUser):
           this.targetTemperature = value;
           break;
+        case this.targetSmartTopic(this.selectedUser):
+          this.targetSmart = value;
+          break;
+        case this.targetEcoTopic(this.selectedUser):
+          this.targetEco = value;
+          break;
         case this.powerSensorTopic(this.selectedUser):
           this.power = value;
           this.updatePowerMetrics(this.power);
