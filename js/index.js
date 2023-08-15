@@ -103,10 +103,12 @@ const app = () => ({
   esp32s: [],
   sysState: POWER_STATE.OFF,
   mode: MODES[0].name,
-  targetTemperature: 0,
   temperature: 0,
-  targetPower: 0,
+  targetTemperature: 0,
+  targetSmart: 0,
+  targetEco: 0,
   power: 0,
+  targetPower: 0,
   temperatureMetrics: [0, 0, 0, 0, 0, 0],
   powerMetrics: [0, 0, 0, 0, 0, 0],
   async init() {
@@ -119,19 +121,9 @@ const app = () => ({
         return;
       }
 
-      client.subscribe(
-        [
-          this.sysStateTopic(this.selectedUser),
-          this.modeTopic(this.selectedUser),
-          this.targetTemperatureTopic(this.selectedUser),
-          this.temperatureSensorTopic(this.selectedUser),
-          this.targetPowerTopic(this.selectedUser),
-          this.powerSensorTopic(this.selectedUser),
-        ],
-        (err) => {
-          if (err) console.error(err);
-        }
-      );
+      client.subscribe(this.allTopics(this.selectedUser), (err) => {
+        if (err) console.error(err);
+      });
     });
 
     client.on("message", (topic, message) => {
@@ -174,47 +166,61 @@ const app = () => ({
 
     this.$watch("selectedUser", (value, prevValue) => {
       if (prevValue) {
-        client.unsubscribe(
-          [
-            this.sysStateTopic(prevValue),
-            this.modeTopic(prevValue),
-            this.targetTemperatureTopic(prevValue),
-            this.temperatureSensorTopic(prevValue),
-            this.targetPowerTopic(prevValue),
-            this.powerSensorTopic(prevValue),
-          ],
-          (err) => {
-            if (err) console.error(err);
-          }
-        );
+        client.unsubscribe(this.allTopics(prevValue), (err) => {
+          if (err) console.error(err);
+        });
       }
 
       if (value) {
-        client.subscribe(
-          [
-            this.sysStateTopic(value),
-            this.modeTopic(value),
-            this.targetTemperatureTopic(value),
-            this.temperatureSensorTopic(value),
-            this.targetPowerTopic(value),
-            this.powerSensorTopic(value),
-          ],
-          (err) => {
-            if (err) console.error(err);
-          }
-        );
+        client.subscribe(this.allTopics(id), (err) => {
+          if (err) console.error(err);
+        });
       }
     });
 
-    this.$watch("targetTemperature", (value) => {
+    this.$watch("targetTemperature", (value, prevValue) => {
+      if (value === prevValue) return;
+
       this.sendMqttMessage(this.targetTemperatureTopic(this.selectedUser))(
         value
       );
     });
 
-    this.$watch("targetPower", (value) => {
+    this.$watch("targetPower", (value, prevValue) => {
+      if (value === prevValue) return;
+
       this.sendMqttMessage(this.targetPowerTopic(this.selectedUser))(value);
     });
+
+    this.$watch("targetSmart", (value, prevValue) => {
+      if (value === prevValue) return;
+
+      this.sendMqttMessage(this.targetSmartTopic(this.selectedUser))(value);
+    });
+
+    this.$watch("targetEco", (value, prevValue) => {
+      if (value === prevValue) return;
+
+      this.sendMqttMessage(this.targetEcoTopic(this.selectedUser))(value);
+    });
+
+    this.$watch("mode", (value, prevValue) => {
+      if (value === prevValue) return;
+
+      this.sendMqttMessage(this.targetEcoTopic(this.selectedUser))(value);
+    });
+  },
+  allTopics(id) {
+    return [
+      this.sysStateTopic(id),
+      this.modeTopic(id),
+      this.temperatureSensorTopic(id),
+      this.targetTemperatureTopic(id),
+      this.targetEcoTopic(id),
+      this.targetPowerTopic(id),
+      this.targetPowerTopic(id),
+      this.powerSensorTopic(id),
+    ];
   },
   sysStateTopic(id) {
     return `${id}/onoff`;
@@ -223,10 +229,16 @@ const app = () => ({
     return `${id}/mode`;
   },
   temperatureSensorTopic(id) {
-    return `${id}/temperature_sensor`;
+    return `${id}/temperature`;
   },
   targetTemperatureTopic(id) {
     return `${id}/target_temperature`;
+  },
+  targetSmartTopic(id) {
+    return `${id}/target_smart`;
+  },
+  targetEcoTopic(id) {
+    return `${id}/target_eco`;
   },
   powerSensorTopic(id) {
     return `${id}/power`;
@@ -242,6 +254,7 @@ const app = () => ({
   },
   sendMqttMessage(topic) {
     return (value) => {
+      console.log({ value, topic });
       const message = JSON.stringify({
         from: "app",
         message: "Lo que sea",
