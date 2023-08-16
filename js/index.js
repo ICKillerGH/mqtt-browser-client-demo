@@ -213,7 +213,7 @@ const app = () => ({
     this.$watch("mode", (value, prevValue) => {
       if (value === prevValue) return;
 
-      this.sendMqttMessage(this.targetEcoTopic(this.selectedUser))(value);
+      this.sendMqttMessage(this.modeTopic(this.selectedUser))(value);
     });
   },
   allTopics(id) {
@@ -260,7 +260,6 @@ const app = () => ({
   },
   sendMqttMessage(topic) {
     return (value) => {
-      console.log({ value, topic });
       const message = JSON.stringify({
         from: "app",
         message: "Lo que sea",

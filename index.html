@@ -129,7 +129,7 @@
 
               <div
                 class="relative justify-self-center"
-                x-data="rangeSlider({min: 20, max: 130, value: targetTemperature, suffix: ' °C'})"
+                x-data="rangeSlider({min: 0, max: 35, value: targetTemperature, suffix: ' °C'})"
                 x-modelable="value"
                 x-model="targetTemperature"
               ></div>
@@ -142,7 +142,7 @@
 
               <div
                 class="relative justify-self-center"
-                x-data="rangeSlider({min: 20, max: 130, value: targetSmart, suffix: ' °C'})"
+                x-data="rangeSlider({min: 0, max: 35, value: targetSmart, suffix: ' °C'})"
                 x-modelable="value"
                 x-model="targetSmart"
               ></div>
@@ -155,7 +155,7 @@
 
               <div
                 class="relative justify-self-center"
-                x-data="rangeSlider({min: 20, max: 130, value: targetEco, suffix: ' °C'})"
+                x-data="rangeSlider({min: 0, max: 35, value: targetEco, suffix: ' °C'})"
                 x-modelable="value"
                 x-model="targetEco"
               ></div>
@@ -170,7 +170,7 @@
 
               <div
                 class="relative justify-self-center"
-                x-data="rangeSlider({min: 0, max: 130, value: temperature, readonly: true, suffix: ' °C', colorFG: '#4287f5'})"
+                x-data="rangeSlider({min: 0, max: 150, value: temperature, readonly: true, suffix: ' °C', colorFG: '#4287f5'})"
                 x-modelable="value"
                 x-model="temperature"
               ></div>
@@ -239,6 +239,6 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <script src="js/pureknob.js"></script>
-    <script src="js/index.js"></script>
+    <script src="js/index.js?v=1.0.1"></script>
   </body>
 </html>
