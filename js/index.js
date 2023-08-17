@@ -178,7 +178,7 @@ const app = () => ({
       }
 
       if (value) {
-        client.subscribe(this.allTopics(id), (err) => {
+        client.subscribe(this.allTopics(value), (err) => {
           if (err) console.error(err);
         });
       }
