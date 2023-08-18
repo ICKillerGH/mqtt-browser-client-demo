@@ -124,41 +124,57 @@
 
           <div class="grid grid-cols-3 gap-4">
             <!-- TEMPERATURA OBJETIVO -->
-            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+            <div
+              class="grid gap-10 rounded-2xl bg-white shadow-md p-6 text-center"
+            >
               <p class="text-xl">Temperatura objetivo</p>
 
-              <div
-                class="relative justify-self-center"
-                x-data="rangeSlider({min: 0, max: 35, value: targetTemperature, suffix: ' °C'})"
-                x-modelable="value"
-                x-model="targetTemperature"
-              ></div>
+              <span class="text-6xl"
+                ><span x-text="targetTemperature"></span> C°</span
+              >
+              <input
+                type="range"
+                class="w-full"
+                name="targetTemperature"
+                x-on:input="handleChange"
+                x-bind:value="targetTemperature"
+              />
             </div>
             <!-- TEMPERATURA OBJETIVO END -->
 
             <!-- SMART OBJETIVO -->
-            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+            <div
+              class="grid gap-10 rounded-2xl bg-white shadow-md p-6 text-center"
+            >
               <p class="text-xl">Smart objetivo</p>
 
-              <div
-                class="relative justify-self-center"
-                x-data="rangeSlider({min: 0, max: 35, value: targetSmart, suffix: ' °C'})"
-                x-modelable="value"
-                x-model="targetSmart"
-              ></div>
+              <span class="text-6xl"
+                ><span x-text="targetSmart"></span> C°</span
+              >
+              <input
+                type="range"
+                class="w-full"
+                name="targetSmart"
+                x-on:input="handleChange"
+                x-bind:value="targetSmart"
+              />
             </div>
             <!-- SMART OBJETIVO END -->
 
             <!-- ECO OBJETIVO -->
-            <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
+            <div
+              class="grid gap-10 rounded-2xl bg-white shadow-md p-6 text-center"
+            >
               <p class="text-xl">Eco objetivo</p>
 
-              <div
-                class="relative justify-self-center"
-                x-data="rangeSlider({min: 0, max: 35, value: targetEco, suffix: ' °C'})"
-                x-modelable="value"
-                x-model="targetEco"
-              ></div>
+              <span class="text-6xl"><span x-text="targetEco"></span> C°</span>
+              <input
+                type="range"
+                class="w-full"
+                name="targetEco"
+                x-on:input="handleChange"
+                x-bind:value="targetEco"
+              />
             </div>
             <!-- ECO OBJETIVO END -->
           </div>
@@ -195,12 +211,14 @@
             <div class="grid rounded-2xl bg-white shadow-md p-6 text-center">
               <p class="text-xl">Potencia objetivo</p>
 
-              <div
-                class="relative justify-self-center"
-                x-data="rangeSlider({min: 0, max: 10, value: targetPower, colorFG: '#cc0c0c'})"
-                x-modelable="value"
-                x-model="targetPower"
-              ></div>
+              <span class="text-6xl" x-text="targetPower"></span>
+              <input
+                type="range"
+                class="w-full"
+                name="targetPower"
+                x-on:input="handleChange"
+                x-bind:value="targetPower"
+              />
             </div>
             <!-- POTENCIA OBJETIVO END -->
 

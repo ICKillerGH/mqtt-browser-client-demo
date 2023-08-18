@@ -184,32 +184,6 @@ const app = () => ({
       }
     });
 
-    this.$watch("targetTemperature", (value, prevValue) => {
-      if (value === prevValue) return;
-
-      this.sendMqttMessage(this.targetTemperatureTopic(this.selectedUser))(
-        value
-      );
-    });
-
-    this.$watch("targetPower", (value, prevValue) => {
-      if (value === prevValue) return;
-
-      this.sendMqttMessage(this.targetPowerTopic(this.selectedUser))(value);
-    });
-
-    this.$watch("targetSmart", (value, prevValue) => {
-      if (value === prevValue) return;
-
-      this.sendMqttMessage(this.targetSmartTopic(this.selectedUser))(value);
-    });
-
-    this.$watch("targetEco", (value, prevValue) => {
-      if (value === prevValue) return;
-
-      this.sendMqttMessage(this.targetEcoTopic(this.selectedUser))(value);
-    });
-
     this.$watch("mode", (value, prevValue) => {
       if (value === prevValue) return;
 
@@ -282,9 +256,42 @@ const app = () => ({
       event.target.valueAsNumber
     );
   },
-  handleTempChange(value) {
-    this.temperature = value;
+  handleChange(event) {
+    const value = event.target.valueAsNumber;
+    const name = event.target.name;
+
+    this[name] = value;
+
+    switch (name) {
+      case "targetTemperature":
+        return this.sendMsgDebounced(
+          this.targetTemperatureTopic(this.selectedUser),
+          value
+        );
+      case "targetSmart":
+        return this.sendMsgDebounced(
+          this.targetSmartTopic(this.selectedUser),
+          value
+        );
+      case "targetEco":
+        return this.sendMsgDebounced(
+          this.targetEcoTopic(this.selectedUser),
+          value
+        );
+      case "targetPower":
+        return this.sendMsgDebounced(
+          this.targetPowerTopic(this.selectedUser),
+          value
+        );
+    }
   },
+  sendMsgDebounced: _.debounce(
+    function (topic, value) {
+      this.sendMqttMessage(topic)(value);
+    },
+    700,
+    { maxWait: "800" }
+  ),
   updateTemperatureMetrics: _.debounce(
     function (temperature) {
       this.temperatureMetrics.shift();
