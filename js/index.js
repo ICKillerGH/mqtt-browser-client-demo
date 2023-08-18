@@ -183,12 +183,6 @@ const app = () => ({
         });
       }
     });
-
-    this.$watch("mode", (value, prevValue) => {
-      if (value === prevValue) return;
-
-      this.sendMqttMessage(this.modeTopic(this.selectedUser))(value);
-    });
   },
   allTopics(id) {
     return [
@@ -313,6 +307,8 @@ const app = () => ({
   },
   setMode(mode) {
     this.mode = mode;
+
+    this.sendMqttMessage(this.modeTopic(this.selectedUser))(mode);
   },
 });
 
