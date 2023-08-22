@@ -191,7 +191,7 @@ const app = () => ({
       this.temperatureSensorTopic(id),
       this.targetTemperatureTopic(id),
       this.targetEcoTopic(id),
-      this.targetPowerTopic(id),
+      this.targetSmartTopic(id),
       this.targetPowerTopic(id),
       this.powerSensorTopic(id),
     ];
