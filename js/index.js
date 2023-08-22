@@ -122,7 +122,9 @@ const app = () => ({
       }
 
       client.subscribe(this.allTopics(this.selectedUser), (err) => {
-        if (err) console.error(err);
+        if (err) return console.error(err);
+
+        this.sendRefreshSignal(this.selectedUser);
       });
     });
 
@@ -179,10 +181,28 @@ const app = () => ({
 
       if (value) {
         client.subscribe(this.allTopics(value), (err) => {
-          if (err) console.error(err);
+          if (err) return console.error(err);
+
+          this.sendRefreshSignal(value);
         });
       }
     });
+  },
+  sendRefreshSignal(id) {
+    this.resetValues();
+    this.sendMqttMessage(this.refreshTopic(id))(1);
+  },
+  resetValues() {
+    this.sysState = POWER_STATE.OFF;
+    this.mode = MODES[0].name;
+    this.temperature = 0;
+    this.targetTemperature = 0;
+    this.targetSmart = 0;
+    this.targetEco = 0;
+    this.power = 0;
+    this.targetPower = 0;
+    this.temperatureMetrics = [0, 0, 0, 0, 0, 0];
+    this.powerMetrics = [0, 0, 0, 0, 0, 0];
   },
   allTopics(id) {
     return [
@@ -219,6 +239,9 @@ const app = () => ({
   },
   targetPowerTopic(id) {
     return `${id}/target_power`;
+  },
+  refreshTopic(id) {
+    return `${id}/refresh`;
   },
   get sysStateIsOff() {
     return this.sysState === POWER_STATE.OFF;
