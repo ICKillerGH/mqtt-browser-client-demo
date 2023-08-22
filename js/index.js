@@ -122,7 +122,7 @@ const app = () => ({
       }
 
       client.subscribe(this.allTopics(this.selectedUser), (err) => {
-        if (err) return console.error(err);
+        if (err) console.error(err);
 
         this.sendRefreshSignal(this.selectedUser);
       });
@@ -181,7 +181,7 @@ const app = () => ({
 
       if (value) {
         client.subscribe(this.allTopics(value), (err) => {
-          if (err) return console.error(err);
+          if (err) console.error(err);
 
           this.sendRefreshSignal(value);
         });
