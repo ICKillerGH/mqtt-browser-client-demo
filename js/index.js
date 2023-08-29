@@ -288,7 +288,7 @@ const app = () => ({
   temperatureMetrics: [0, 0, 0, 0, 0, 0],
   powerMetrics: [0, 0, 0, 0, 0, 0],
   async init() {
-    const response = await fetch("../devices.json");
+    const response = await fetch("../devices.json?v=1.0");
     this.esp32s = await response.json();
     this.selectedUser = this.esp32s?.[0]?.id ?? null;
 
