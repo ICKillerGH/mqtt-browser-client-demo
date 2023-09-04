@@ -74,14 +74,15 @@
               <p class="text-xl">Estado del dispositivo</p>
 
               <template x-for="(mStatus, code) in statuses">
-                <div
-                  class="flex flex-col items-center"
-                  x-bind:class="mStatus.class"
-                  x-show="code == status"
-                >
-                  <div x-html="mStatus.icon"></div>
-                  <span class="text-lg" x-text="mStatus.description"></span>
-                </div>
+                <template x-if="code == status">
+                  <div
+                    class="flex flex-col items-center"
+                    x-bind:class="mStatus.class"
+                  >
+                    <div x-html="mStatus.icon"></div>
+                    <span class="text-lg" x-text="mStatus.description"></span>
+                  </div>
+                </template>
               </template>
             </div>
             <!-- ESTADO DEL DISPOSITIVO END -->
