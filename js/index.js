@@ -1,4 +1,4 @@
-const client = mqtt.connect("ws://3.23.172.84:8883", {
+const client = mqtt.connect("ws://54.207.97.89:8883", {
   username: "mqtt_client",
   password: "password",
 });
