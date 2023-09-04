@@ -288,7 +288,7 @@ const app = () => ({
   temperatureMetrics: [0, 0, 0, 0, 0, 0],
   powerMetrics: [0, 0, 0, 0, 0, 0],
   async init() {
-    const response = await fetch("../devices.json?v=1.0");
+    const response = await fetch("devices.json?v=1.0");
     this.esp32s = await response.json();
     this.selectedUser = this.esp32s?.[0]?.id ?? null;
 
@@ -498,16 +498,22 @@ const app = () => ({
   ),
   updateTemperatureMetrics: _.debounce(
     function (temperature) {
-      this.temperatureMetrics.shift();
-      this.temperatureMetrics.push(temperature);
+      const newMetrics = Array.from(this.temperatureMetrics);
+
+      newMetrics.shift();
+
+      this.temperatureMetrics = [...newMetrics, temperature];
     },
     900,
     { maxWait: "5000" }
   ),
   updatePowerMetrics: _.debounce(
     function (power) {
-      this.powerMetrics.shift();
-      this.powerMetrics.push(power);
+      const newMetrics = Array.from(this.powerMetrics);
+
+      newMetrics.shift();
+
+      this.powerMetrics = [...newMetrics, power];
     },
     900,
     { maxWait: "5000" }
